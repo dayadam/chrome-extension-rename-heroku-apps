@@ -4,7 +4,7 @@
   "manifest_version": 2,
   "content_scripts": [
     {
-      "matches": ["https://*.heroku.com/*"],
+      "matches": ["https://*.heroku.com/*", "https://*.reddit.com/*"],
       "js": ["content.js"],
       "run_at":"document_start"
     }
