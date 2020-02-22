@@ -77,7 +77,6 @@ window.onload = function() {
           // prevent anchor tag href redirect with stopPropagation when
           // edit and delete are clicked
           divSibling.appendChild(deleteDiv);
-          //console.log(addedNode.nextSibling);
 
           imgDiv.addEventListener("click", function(event) {
             event.stopPropagation();
@@ -85,18 +84,20 @@ window.onload = function() {
 
             // if edit img is a check mark, it has been clicked to edit,
             // so on click submit changes
-            if (currentlyEditing === true) {
-              //if (editImgNode.getAttribute("src") === checkImgURL) {
-              /* const inputNode =
-                parentNode.firstChild.nextSibling.nextSibling.nextSibling
-                  .nextSibling.nextSibling; */
+            if (currentlyEditing) {
               const inputNode = divSibling.firstChild;
               const editImgNodeEditing =
                 divSibling.firstChild.nextSibling.firstChild;
-              //console.log(editImgNodeEditing);
-              //console.log(inputNode);
               const editedName = inputNode.value;
-              //const editedName = addedNode.value;
+              //change back edit img to pencil
+              editImgNodeEditing.setAttribute("src", pencilImgURL);
+              editImgNodeEditing.setAttribute("alt", "edit app name");
+              divSibling.removeChild(inputNode);
+              currentlyEditing = false;
+              /*               const inputNode = divSibling.firstChild;
+              const editImgNodeEditing =
+                divSibling.firstChild.nextSibling.firstChild;
+              const editedName = inputNode.value; */
               //update apps array with edited name
               apps.forEach(app => {
                 if (app.herokuName === appName) {
@@ -106,26 +107,20 @@ window.onload = function() {
               // save to local storage
               localStorage.setItem("apps", JSON.stringify(apps));
               //change back edit img to pencil
-              editImgNodeEditing.setAttribute("src", pencilImgURL);
-              editImgNodeEditing.setAttribute("alt", "edit app name");
+              /*               editImgNodeEditing.setAttribute("src", pencilImgURL);
+              editImgNodeEditing.setAttribute("alt", "edit app name"); */
               if (editedName === "") {
                 addedNode.innerText = appName;
               } else {
                 addedNode.innerText = editedName;
               }
-              // const newSpan = document.createElement("span");
-              // newSpan.setAttribute("class", "f3 near-black");
-              // newSpan.textContent = editedName;
-              // console.log(parentNode);
-              //console.log(inputNode);
-              divSibling.removeChild(inputNode);
-              currentlyEditing = false;
+              /*               divSibling.removeChild(inputNode);
+              currentlyEditing = false; */
             }
             // if edit img displays a pencil, it has not already been clicked,
             // so replace heroku app name with input box to edit
-            else if (currentlyEditing === false) {
+            else if (!currentlyEditing) {
               const editImgNode = divSibling.firstChild.firstChild;
-              //if (editImgNode.getAttribute("src") === pencilImgURL) {
               // replace app name text with input box to rename app
               const input = document.createElement("input");
               input.setAttribute("type", "text");
@@ -146,7 +141,6 @@ window.onload = function() {
                 },
                 false
               );
-              //console.log(editImgNode);
               // change edit img from pencil to check mark for submit
               try {
                 editImgNode.setAttribute("src", checkImgURL);
@@ -167,6 +161,7 @@ window.onload = function() {
               const inputNode = divSibling.firstChild;
               const editImgNodeEditing =
                 divSibling.firstChild.nextSibling.firstChild;
+              const editedName = inputNode.value;
               //change back edit img to pencil
               editImgNodeEditing.setAttribute("src", pencilImgURL);
               editImgNodeEditing.setAttribute("alt", "edit app name");
@@ -195,3 +190,20 @@ window.onload = function() {
   // listening for DOM changes
   observer.observe(body, config);
 };
+
+function stopEditing(divSibling) {
+  const inputNode = divSibling.firstChild;
+  const editImgNodeEditing = divSibling.firstChild.nextSibling.firstChild;
+  const editedName = inputNode.value;
+  //change back edit img to pencil
+  editImgNodeEditing.setAttribute("src", pencilImgURL);
+  editImgNodeEditing.setAttribute("alt", "edit app name");
+  divSibling.removeChild(inputNode);
+  currentlyEditing = false;
+  const stopEditing = {
+    inputNode: inputNode,
+    editImgNodeEditing: editImgNodeEditing,
+    editedName: editedName
+  };
+  return stopEditing;
+}
