@@ -8,9 +8,10 @@ img.chrome-app-item {
 
 div.chrome-app-item {
   margin-left: 3%;
-  border: 2px solid black;
+  border: 2px solid silver;
   display: inline-block;
   vertical-align: middle;
+  border-radius: 4px;
 }
 
 div.chrome-app-item.edit {
@@ -33,4 +34,5 @@ span.chrome-app-item {
   font-weight: bold;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 20px;
+  opacity: .85;
 }
