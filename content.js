@@ -16,28 +16,37 @@ window.onload = function() {
     for (let mutation of mutationsList) {
       mutation.addedNodes.forEach(addedNode => {
         if (addedNode.className === "f3 near-black") {
-          //const editButton = document.createElement("button");
           const imgDiv = document.createElement("div");
-          imgDiv.setAttribute("class", "app-item edit");
+          imgDiv.setAttribute("class", "chrome-app-item edit");
           const editImg = document.createElement("img");
           editImg.setAttribute("src", pencilImgURL);
           editImg.setAttribute("alt", "edit pencil");
           editImg.setAttribute(
             "class",
-            `app-item ${addedNode.textContent.trim()}`
+            `chrome-app-item ${addedNode.textContent.trim()}`
           );
           imgDiv.appendChild(editImg);
           addedNode.nextSibling.nextSibling.appendChild(imgDiv);
           const deleteDiv = document.createElement("div");
-          deleteDiv.setAttribute("class", "app-item delete");
+          deleteDiv.setAttribute("class", "chrome-app-item delete");
           const deleteDivText = document.createElement("span");
           deleteDivText.setAttribute(
             "class",
-            `app-item ${addedNode.textContent.trim()}`
+            `chrome-app-item ${addedNode.textContent.trim()}`
           );
           deleteDivText.innerText = "X";
           deleteDiv.appendChild(deleteDivText);
           addedNode.nextSibling.nextSibling.appendChild(deleteDiv);
+          deleteDiv.addEventListener("click", function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            console.log(event);
+          });
+          imgDiv.addEventListener("click", function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            console.log(event);
+          });
         }
       });
     }
