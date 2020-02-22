@@ -162,7 +162,28 @@ window.onload = function() {
           deleteDiv.addEventListener("click", function(event) {
             event.stopPropagation();
             event.preventDefault();
-            //replace span, local storage
+            // simply exit editing if editing
+            if (currentlyEditing) {
+              const inputNode = divSibling.firstChild;
+              const editImgNodeEditing =
+                divSibling.firstChild.nextSibling.firstChild;
+              //change back edit img to pencil
+              editImgNodeEditing.setAttribute("src", pencilImgURL);
+              editImgNodeEditing.setAttribute("alt", "edit app name");
+              divSibling.removeChild(inputNode);
+              currentlyEditing = false;
+            }
+            // otherwise delete app name a set to given heroku name
+            else {
+              addedNode.innerText = appName;
+              apps.forEach(app => {
+                if (app.herokuName === appName) {
+                  app.editedName = "";
+                }
+              });
+              // save to local storage
+              localStorage.setItem("apps", JSON.stringify(apps));
+            }
           });
         }
       });
