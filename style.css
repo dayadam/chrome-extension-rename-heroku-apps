@@ -1,0 +1,17 @@
+button.app-item {
+  padding: 5px 15px;
+  vertical-align: middle;
+  margin-left: 3%;
+}
+
+img.app-item {
+  vertical-align: middle;
+}
+
+div.app-item {
+  margin-left: 3%;
+  padding: 1.5px 5px;
+  /* width: 100%; */
+  border: 1px solid black;
+  display: inline-block;
+}
