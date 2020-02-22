@@ -23,6 +23,10 @@ div.chrome-app-item.delete {
   text-align: center;
 }
 
+input.chrome-app-item {
+  margin-left: 3%;
+}
+
 span.chrome-app-item {
   line-height: 25px;
   color: firebrick;

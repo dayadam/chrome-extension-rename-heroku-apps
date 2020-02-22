@@ -27,8 +27,8 @@ window.onload = function() {
       mutation.addedNodes.forEach(addedNode => {
         if (addedNode.className === "f3 near-black") {
           //save parent node of app name as variable
-          const parentNode = addedNode.parentElement;
           const divSibling = addedNode.nextSibling.nextSibling;
+          const parentNode = divSibling.parentElement;
           const appName = addedNode.textContent.trim();
           //setting first local storage / apps if none exist
           if (apps.length === 0) {
@@ -59,7 +59,7 @@ window.onload = function() {
           imgDiv.setAttribute("class", "chrome-app-item edit");
           const editImg = document.createElement("img");
           editImg.setAttribute("src", pencilImgURL);
-          editImg.setAttribute("alt", "edit pencil");
+          editImg.setAttribute("alt", "edit app name");
           editImg.setAttribute("class", `chrome-app-item ${appName}`);
           imgDiv.appendChild(editImg);
           divSibling.appendChild(imgDiv);
@@ -82,12 +82,28 @@ window.onload = function() {
             // if edit img is a check mark, it has been clicked to edit,
             // so on click submit changes
             if (editImgNode.getAttribute("src") === checkImgURL) {
-              const inputNode =
+              /* const inputNode =
                 parentNode.firstChild.nextSibling.nextSibling.nextSibling
-                  .nextSibling.nextSibling;
-              console.log(inputNode);
-              const editedName = inputNode.value;
-              console.log(editedName);
+                  .nextSibling.nextSibling; */
+              //const editedName = inputNode.value;
+              const editedName = addedNode.value;
+              //update apps array with edited name
+              apps.forEach(app => {
+                if (app.herokuName === appName) {
+                  app.editedName = editedName;
+                }
+              });
+              // save to local storage
+              localStorage.setItem("apps", JSON.stringify(apps));
+              // change back edit img to pencil
+              editImgNode.setAttribute("src", pencilImgURL);
+              editImgNode.setAttribute("alt", "edit app name");
+              const newSpan = document.createElement("span");
+              newSpan.setAttribute("class", "f3 near-black");
+              newSpan.textContent = editedName;
+              console.log(parentNode);
+              //console.log(inputNode);
+              parentNode.replaceChild(addedNode, inputNode);
             }
             // if edit img displays a pencil, it has not already been clicked,
             // so replace heroku app name with input box to edit
@@ -97,6 +113,7 @@ window.onload = function() {
               input.setAttribute("type", "text");
               input.setAttribute("name", `${appName}`);
               input.setAttribute("placeholder", `${appName}`);
+              input.setAttribute("class", "chrome-app-item");
               // input.setAttribute("value", `${appName}`);
               input.addEventListener("click", function(event) {
                 event.stopPropagation();
@@ -115,7 +132,13 @@ window.onload = function() {
               // change edit img from pencil to check mark for submit
               editImgNode.setAttribute("src", checkImgURL);
               editImgNode.setAttribute("alt", "submit edited name");
-              addedNode.parentElement.replaceChild(input, addedNode);
+              divSibling.insertBefore(input, divSibling.firstChild);
+              //addedNode.parentElement.replaceChild(input, addedNode);
+              // reset added node to input. i feel like this is going to cause a lot of problems
+              // probably shouldn't replace addedNode
+              /* addedNode = input;
+              console.log(input.parentElement);
+              console.log(addedNode); */
               //console.log(addedNode.nextSibling);
               //console.log(addedNode);
               //addedNode = input;
