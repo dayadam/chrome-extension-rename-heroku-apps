@@ -7,6 +7,7 @@ if (localStorage.getItem("apps") === null) {
 }
 // storage saved as string, must parse/ stringify
 const apps = JSON.parse(localStorage.getItem("apps"));
+let currentlyEditing = false;
 
 // heroku is client-side rendered, so listen for DOM mutation
 // in order to see DOM tree. wait till on load for rendering to occur
@@ -44,6 +45,9 @@ window.onload = function() {
           for (i = 0; i < apps.length; i++) {
             if (apps[i].herokuName === appName) {
               found = true;
+              if (apps[i].editedName) {
+                addedNode.innerText = apps[i].editedName;
+              }
               //console.log(`${appName} exists in storage`);
             } else if (i === apps.length - 1 && found === false) {
               //console.log(`${appName} pushed to apps`);
@@ -78,15 +82,21 @@ window.onload = function() {
           imgDiv.addEventListener("click", function(event) {
             event.stopPropagation();
             event.preventDefault();
-            const editImgNode = divSibling.firstChild.firstChild;
+
             // if edit img is a check mark, it has been clicked to edit,
             // so on click submit changes
-            if (editImgNode.getAttribute("src") === checkImgURL) {
+            if (currentlyEditing === true) {
+              //if (editImgNode.getAttribute("src") === checkImgURL) {
               /* const inputNode =
                 parentNode.firstChild.nextSibling.nextSibling.nextSibling
                   .nextSibling.nextSibling; */
-              //const editedName = inputNode.value;
-              const editedName = addedNode.value;
+              const inputNode = divSibling.firstChild;
+              const editImgNodeEditing =
+                divSibling.firstChild.nextSibling.firstChild;
+              //console.log(editImgNodeEditing);
+              //console.log(inputNode);
+              const editedName = inputNode.value;
+              //const editedName = addedNode.value;
               //update apps array with edited name
               apps.forEach(app => {
                 if (app.herokuName === appName) {
@@ -95,19 +105,27 @@ window.onload = function() {
               });
               // save to local storage
               localStorage.setItem("apps", JSON.stringify(apps));
-              // change back edit img to pencil
-              editImgNode.setAttribute("src", pencilImgURL);
-              editImgNode.setAttribute("alt", "edit app name");
-              const newSpan = document.createElement("span");
-              newSpan.setAttribute("class", "f3 near-black");
-              newSpan.textContent = editedName;
-              console.log(parentNode);
+              //change back edit img to pencil
+              editImgNodeEditing.setAttribute("src", pencilImgURL);
+              editImgNodeEditing.setAttribute("alt", "edit app name");
+              if (editedName === "") {
+                addedNode.innerText = appName;
+              } else {
+                addedNode.innerText = editedName;
+              }
+              // const newSpan = document.createElement("span");
+              // newSpan.setAttribute("class", "f3 near-black");
+              // newSpan.textContent = editedName;
+              // console.log(parentNode);
               //console.log(inputNode);
-              parentNode.replaceChild(addedNode, inputNode);
+              divSibling.removeChild(inputNode);
+              currentlyEditing = false;
             }
             // if edit img displays a pencil, it has not already been clicked,
             // so replace heroku app name with input box to edit
-            if (editImgNode.getAttribute("src") === pencilImgURL) {
+            else if (currentlyEditing === false) {
+              const editImgNode = divSibling.firstChild.firstChild;
+              //if (editImgNode.getAttribute("src") === pencilImgURL) {
               // replace app name text with input box to rename app
               const input = document.createElement("input");
               input.setAttribute("type", "text");
@@ -128,21 +146,16 @@ window.onload = function() {
                 },
                 false
               );
-              console.log(editImgNode);
+              //console.log(editImgNode);
               // change edit img from pencil to check mark for submit
-              editImgNode.setAttribute("src", checkImgURL);
-              editImgNode.setAttribute("alt", "submit edited name");
-              divSibling.insertBefore(input, divSibling.firstChild);
-              //addedNode.parentElement.replaceChild(input, addedNode);
-              // reset added node to input. i feel like this is going to cause a lot of problems
-              // probably shouldn't replace addedNode
-              /* addedNode = input;
-              console.log(input.parentElement);
-              console.log(addedNode); */
-              //console.log(addedNode.nextSibling);
-              //console.log(addedNode);
-              //addedNode = input;
-              //console.log(input);
+              try {
+                editImgNode.setAttribute("src", checkImgURL);
+                editImgNode.setAttribute("alt", "submit edited name");
+                divSibling.insertBefore(input, divSibling.firstChild);
+                currentlyEditing = true;
+              } catch (error) {
+                console.log(error);
+              }
             }
           });
 
