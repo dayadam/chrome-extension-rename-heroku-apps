@@ -4,13 +4,13 @@ const pencilImgURL = chrome.runtime.getURL("images/pencil.png");
 if (localStorage.getItem("apps") === null) {
   localStorage.setItem("apps", "[]");
 }
-// storage saved in string, must parse/ stringify
+// storage saved as string, must parse/ stringify
 const apps = JSON.parse(localStorage.getItem("apps"));
 
 // heroku is client-side rendered, so listen for DOM mutation
 // in order to see DOM tree. wait till on load for rendering to occur
 window.onload = function() {
-  console.log("DOM fully loaded and parsed");
+  console.log("window loaded");
   const body = document.getElementsByTagName("body")[0];
   // Select the node that will be observed for mutations
   // Options for the observer (which mutations to observe)
