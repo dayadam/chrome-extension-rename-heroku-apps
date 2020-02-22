@@ -7,6 +7,7 @@ if (localStorage.getItem("apps") === null) {
 }
 // storage saved as string, must parse/ stringify
 const apps = JSON.parse(localStorage.getItem("apps"));
+// editing stateful variable
 let currentlyEditing = false;
 
 // heroku is client-side rendered, so listen for DOM mutation
@@ -26,38 +27,15 @@ window.onload = function() {
   const callback = function(mutationsList, observer) {
     for (let mutation of mutationsList) {
       mutation.addedNodes.forEach(addedNode => {
+        if (addedNode.className === "ml1") {
+          const appName = addedNode.textContent.trim();
+          checkStore(addedNode, appName);
+        }
         if (addedNode.className === "f3 near-black") {
           //save parent node of app name as variable
           const divSibling = addedNode.nextSibling.nextSibling;
-          const parentNode = divSibling.parentElement;
           const appName = addedNode.textContent.trim();
-          //setting first local storage / apps if none exist
-          if (apps.length === 0) {
-            apps.push({
-              herokuName: appName,
-              editedName: ""
-            });
-            localStorage.setItem("apps", JSON.stringify(apps));
-          }
-          // looping through apps to see if app exists in apps / storage,
-          // and if not push it to apps / saving to local storage
-          let found = false;
-          for (i = 0; i < apps.length; i++) {
-            if (apps[i].herokuName === appName) {
-              found = true;
-              if (apps[i].editedName) {
-                addedNode.innerText = apps[i].editedName;
-              }
-              //console.log(`${appName} exists in storage`);
-            } else if (i === apps.length - 1 && found === false) {
-              //console.log(`${appName} pushed to apps`);
-              apps.push({
-                herokuName: appName,
-                editedName: ""
-              });
-              localStorage.setItem("apps", JSON.stringify(apps));
-            }
-          }
+          checkStore(addedNode, appName);
           //edit div and img
           const imgDiv = document.createElement("div");
           imgDiv.setAttribute("class", "chrome-app-item edit");
@@ -81,7 +59,6 @@ window.onload = function() {
           imgDiv.addEventListener("click", function(event) {
             event.stopPropagation();
             event.preventDefault();
-
             // if edit img is a check mark, it has been clicked to edit,
             // so on click submit changes
             if (currentlyEditing) {
@@ -94,10 +71,6 @@ window.onload = function() {
               editImgNodeEditing.setAttribute("alt", "edit app name");
               divSibling.removeChild(inputNode);
               currentlyEditing = false;
-              /*               const inputNode = divSibling.firstChild;
-              const editImgNodeEditing =
-                divSibling.firstChild.nextSibling.firstChild;
-              const editedName = inputNode.value; */
               //update apps array with edited name
               apps.forEach(app => {
                 if (app.herokuName === appName) {
@@ -106,16 +79,11 @@ window.onload = function() {
               });
               // save to local storage
               localStorage.setItem("apps", JSON.stringify(apps));
-              //change back edit img to pencil
-              /*               editImgNodeEditing.setAttribute("src", pencilImgURL);
-              editImgNodeEditing.setAttribute("alt", "edit app name"); */
               if (editedName === "") {
                 addedNode.innerText = appName;
               } else {
                 addedNode.innerText = editedName;
               }
-              /*               divSibling.removeChild(inputNode);
-              currentlyEditing = false; */
             }
             // if edit img displays a pencil, it has not already been clicked,
             // so replace heroku app name with input box to edit
@@ -127,7 +95,7 @@ window.onload = function() {
               input.setAttribute("name", `${appName}`);
               input.setAttribute("placeholder", `${appName}`);
               input.setAttribute("class", "chrome-app-item");
-              // input.setAttribute("value", `${appName}`);
+              //input.setAttribute("value", `${addedNode.innerText}`);
               input.addEventListener("click", function(event) {
                 event.stopPropagation();
                 event.preventDefault();
@@ -161,7 +129,6 @@ window.onload = function() {
               const inputNode = divSibling.firstChild;
               const editImgNodeEditing =
                 divSibling.firstChild.nextSibling.firstChild;
-              const editedName = inputNode.value;
               //change back edit img to pencil
               editImgNodeEditing.setAttribute("src", pencilImgURL);
               editImgNodeEditing.setAttribute("alt", "edit app name");
@@ -191,19 +158,32 @@ window.onload = function() {
   observer.observe(body, config);
 };
 
-function stopEditing(divSibling) {
-  const inputNode = divSibling.firstChild;
-  const editImgNodeEditing = divSibling.firstChild.nextSibling.firstChild;
-  const editedName = inputNode.value;
-  //change back edit img to pencil
-  editImgNodeEditing.setAttribute("src", pencilImgURL);
-  editImgNodeEditing.setAttribute("alt", "edit app name");
-  divSibling.removeChild(inputNode);
-  currentlyEditing = false;
-  const stopEditing = {
-    inputNode: inputNode,
-    editImgNodeEditing: editImgNodeEditing,
-    editedName: editedName
-  };
-  return stopEditing;
+function checkStore(addedNode, appName) {
+  //setting first local storage / apps if none exist
+  if (apps.length === 0) {
+    apps.push({
+      herokuName: appName,
+      editedName: ""
+    });
+    localStorage.setItem("apps", JSON.stringify(apps));
+  }
+  // looping through apps to see if app exists in apps / storage,
+  // and if not push it to apps / saving to local storage
+  let found = false;
+  for (i = 0; i < apps.length; i++) {
+    if (apps[i].herokuName === appName) {
+      found = true;
+      if (apps[i].editedName) {
+        addedNode.innerText = apps[i].editedName;
+      }
+      console.log(`${appName} exists in storage`);
+    } else if (i === apps.length - 1 && found === false) {
+      //console.log(`${appName} pushed to apps`);
+      apps.push({
+        herokuName: appName,
+        editedName: ""
+      });
+      localStorage.setItem("apps", JSON.stringify(apps));
+    }
+  }
 }
