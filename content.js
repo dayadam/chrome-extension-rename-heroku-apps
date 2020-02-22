@@ -26,10 +26,15 @@ window.onload = function() {
     for (let mutation of mutationsList) {
       mutation.addedNodes.forEach(addedNode => {
         if (addedNode.className === "f3 near-black") {
+          //save parent node of app name as variable
+          const parentNode = addedNode.parentElement;
+          const divSibling = addedNode.nextSibling.nextSibling;
+          const appName = addedNode.textContent.trim();
+          console.log(parentNode);
           //setting first local storage / apps if none exist
           if (apps.length === 0) {
             apps.push({
-              herokuName: addedNode.textContent.trim(),
+              herokuName: appName,
               editedName: ""
             });
             localStorage.setItem("apps", JSON.stringify(apps));
@@ -38,13 +43,13 @@ window.onload = function() {
           // and if not push it to apps / saving to local storage
           let found = false;
           for (i = 0; i < apps.length; i++) {
-            if (apps[i].herokuName === addedNode.textContent.trim()) {
+            if (apps[i].herokuName === appName) {
               found = true;
-              console.log(`${addedNode.textContent.trim()} exists in storage`);
+              //console.log(`${appName} exists in storage`);
             } else if (i === apps.length - 1 && found === false) {
-              console.log(`${addedNode.textContent.trim()} pushed to apps`);
+              //console.log(`${appName} pushed to apps`);
               apps.push({
-                herokuName: addedNode.textContent.trim(),
+                herokuName: appName,
                 editedName: ""
               });
               localStorage.setItem("apps", JSON.stringify(apps));
@@ -56,61 +61,55 @@ window.onload = function() {
           const editImg = document.createElement("img");
           editImg.setAttribute("src", pencilImgURL);
           editImg.setAttribute("alt", "edit pencil");
-          editImg.setAttribute(
-            "class",
-            `chrome-app-item ${addedNode.textContent.trim()}`
-          );
+          editImg.setAttribute("class", `chrome-app-item ${appName}`);
           imgDiv.appendChild(editImg);
-          addedNode.nextSibling.nextSibling.appendChild(imgDiv);
+          divSibling.appendChild(imgDiv);
           //delete div and "X" text
           const deleteDiv = document.createElement("div");
           deleteDiv.setAttribute("class", "chrome-app-item delete");
           const deleteDivText = document.createElement("span");
-          deleteDivText.setAttribute(
-            "class",
-            `chrome-app-item ${addedNode.textContent.trim()}`
-          );
+          deleteDivText.setAttribute("class", `chrome-app-item ${appName}`);
           deleteDivText.innerText = "X";
           deleteDiv.appendChild(deleteDivText);
           // prevent anchor tag href redirect with stopPropagation when
           // edit and delete are clicked
-          addedNode.nextSibling.nextSibling.appendChild(deleteDiv);
-          console.log(addedNode.nextSibling);
+          divSibling.appendChild(deleteDiv);
+          //console.log(addedNode.nextSibling);
+
           imgDiv.addEventListener("click", function(event) {
             event.stopPropagation();
             event.preventDefault();
-            // replace app name text with input box to rename app
-            const input = document.createElement("input");
-            input.setAttribute("type", "text");
-            input.setAttribute("name", `${addedNode.textContent.trim()}`);
-            input.setAttribute(
-              "placeholder",
-              `${addedNode.textContent.trim()}`
-            );
-            // input.setAttribute("value", `${addedNode.textContent.trim()}`);
-            input.addEventListener("click", function(event) {
-              event.stopPropagation();
-              event.preventDefault();
-            });
-            // drag prevention doesn't seem to do anything
-            input.addEventListener(
-              "drag",
-              function(event) {
+            const editImgNode = divSibling.firstChild.firstChild;
+            if (editImgNode.getAttribute("src") === pencilImgURL) {
+              // replace app name text with input box to rename app
+              const input = document.createElement("input");
+              input.setAttribute("type", "text");
+              input.setAttribute("name", `${appName}`);
+              input.setAttribute("placeholder", `${appName}`);
+              // input.setAttribute("value", `${appName}`);
+              input.addEventListener("click", function(event) {
                 event.stopPropagation();
                 event.preventDefault();
-              },
-              false
-            );
-            console.log(addedNode.nextSibling); // change src
-            addedNode.parentElement.replaceChild(input, addedNode);
-            console.log(addedNode.nextSibling);
-            /*             addedNode.nextSibling.firstChild.firstChild.setAttribute(
-              "src",
-              checkImgURL
-            ); */
-            console.log(addedNode);
-            //addedNode = input;
-            console.log(input);
+              });
+              // drag prevention doesn't seem to do anything
+              input.addEventListener(
+                "drag",
+                function(event) {
+                  event.stopPropagation();
+                  event.preventDefault();
+                },
+                false
+              );
+              console.log(editImgNode);
+              // change src
+              editImgNode.setAttribute("src", checkImgURL);
+              editImgNode.setAttribute("alt", "submit edited name");
+              addedNode.parentElement.replaceChild(input, addedNode);
+              //console.log(addedNode.nextSibling);
+              //console.log(addedNode);
+              //addedNode = input;
+              //console.log(input);
+            }
           });
           //on submit click
           deleteDiv.addEventListener("click", function(event) {
