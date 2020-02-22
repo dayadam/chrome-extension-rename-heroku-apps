@@ -18,16 +18,26 @@ window.onload = function() {
         if (addedNode.className === "f3 near-black") {
           //const editButton = document.createElement("button");
           const imgDiv = document.createElement("div");
-          imgDiv.setAttribute("class", "app-item");
-          imgDiv.setAttribute("class", "edit");
+          imgDiv.setAttribute("class", "app-item edit");
           const editImg = document.createElement("img");
           editImg.setAttribute("src", pencilImgURL);
           editImg.setAttribute("alt", "edit pencil");
-          editImg.setAttribute("class", addedNode.textContent.trim());
-          editImg.setAttribute("class", "app-item");
+          editImg.setAttribute(
+            "class",
+            `app-item ${addedNode.textContent.trim()}`
+          );
           imgDiv.appendChild(editImg);
-
           addedNode.nextSibling.nextSibling.appendChild(imgDiv);
+          const deleteDiv = document.createElement("div");
+          deleteDiv.setAttribute("class", "app-item delete");
+          const deleteDivText = document.createElement("span");
+          deleteDivText.setAttribute(
+            "class",
+            `app-item ${addedNode.textContent.trim()}`
+          );
+          deleteDivText.innerText = "X";
+          deleteDiv.appendChild(deleteDivText);
+          addedNode.nextSibling.nextSibling.appendChild(deleteDiv);
         }
       });
     }
