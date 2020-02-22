@@ -30,7 +30,6 @@ window.onload = function() {
           const parentNode = addedNode.parentElement;
           const divSibling = addedNode.nextSibling.nextSibling;
           const appName = addedNode.textContent.trim();
-          console.log(parentNode);
           //setting first local storage / apps if none exist
           if (apps.length === 0) {
             apps.push({
@@ -80,6 +79,18 @@ window.onload = function() {
             event.stopPropagation();
             event.preventDefault();
             const editImgNode = divSibling.firstChild.firstChild;
+            // if edit img is a check mark, it has been clicked to edit,
+            // so on click submit changes
+            if (editImgNode.getAttribute("src") === checkImgURL) {
+              const inputNode =
+                parentNode.firstChild.nextSibling.nextSibling.nextSibling
+                  .nextSibling.nextSibling;
+              console.log(inputNode);
+              const editedName = inputNode.value;
+              console.log(editedName);
+            }
+            // if edit img displays a pencil, it has not already been clicked,
+            // so replace heroku app name with input box to edit
             if (editImgNode.getAttribute("src") === pencilImgURL) {
               // replace app name text with input box to rename app
               const input = document.createElement("input");
@@ -101,7 +112,7 @@ window.onload = function() {
                 false
               );
               console.log(editImgNode);
-              // change src
+              // change edit img from pencil to check mark for submit
               editImgNode.setAttribute("src", checkImgURL);
               editImgNode.setAttribute("alt", "submit edited name");
               addedNode.parentElement.replaceChild(input, addedNode);
@@ -111,7 +122,7 @@ window.onload = function() {
               //console.log(input);
             }
           });
-          //on submit click
+
           deleteDiv.addEventListener("click", function(event) {
             event.stopPropagation();
             event.preventDefault();
