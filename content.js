@@ -1,5 +1,6 @@
 //get local img url in chrome runtime env
 const pencilImgURL = chrome.runtime.getURL("images/pencil.png");
+const checkImgURL = chrome.runtime.getURL("images/checkmark.png");
 // set an empty array if no data in localStorage
 if (localStorage.getItem("apps") === null) {
   localStorage.setItem("apps", "[]");
@@ -74,15 +75,48 @@ window.onload = function() {
           // prevent anchor tag href redirect with stopPropagation when
           // edit and delete are clicked
           addedNode.nextSibling.nextSibling.appendChild(deleteDiv);
-          deleteDiv.addEventListener("click", function(event) {
-            event.stopPropagation();
-            event.preventDefault();
-            console.log(event);
-          });
+          console.log(addedNode.nextSibling);
           imgDiv.addEventListener("click", function(event) {
             event.stopPropagation();
             event.preventDefault();
-            console.log(event);
+            // replace app name text with input box to rename app
+            const input = document.createElement("input");
+            input.setAttribute("type", "text");
+            input.setAttribute("name", `${addedNode.textContent.trim()}`);
+            input.setAttribute(
+              "placeholder",
+              `${addedNode.textContent.trim()}`
+            );
+            // input.setAttribute("value", `${addedNode.textContent.trim()}`);
+            input.addEventListener("click", function(event) {
+              event.stopPropagation();
+              event.preventDefault();
+            });
+            // drag prevention doesn't seem to do anything
+            input.addEventListener(
+              "drag",
+              function(event) {
+                event.stopPropagation();
+                event.preventDefault();
+              },
+              false
+            );
+            console.log(addedNode.nextSibling); // change src
+            addedNode.parentElement.replaceChild(input, addedNode);
+            console.log(addedNode.nextSibling);
+            /*             addedNode.nextSibling.firstChild.firstChild.setAttribute(
+              "src",
+              checkImgURL
+            ); */
+            console.log(addedNode);
+            //addedNode = input;
+            console.log(input);
+          });
+          //on submit click
+          deleteDiv.addEventListener("click", function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            //replace span, local storage
           });
         }
       });
